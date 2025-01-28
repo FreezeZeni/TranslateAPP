@@ -30,7 +30,7 @@ def listen_in_background(recognizer, source, audio_queue):
                 print(f"Ошибка записи: {e}")
                 time.sleep(1)
         else:
-            time.sleep(0.5)  # Пауза для уменьшения нагрузки на CPU
+            time.sleep(0.5)
 
 def process_audio(recognizer, audio_queue):
     global is_recognition_active, textbar
@@ -48,7 +48,7 @@ def process_audio(recognizer, audio_queue):
                 print(f"Ошибка сервиса: {e}")
                 time.sleep(1)
         else:
-            time.sleep(0.5)  # Пауза для уменьшения нагрузки на CPU
+            time.sleep(0.5)
 
 def toggle_recognition():
     global is_recognition_active
@@ -99,17 +99,14 @@ def Open_a_chat():
     
     win32api.keybd_event(key_code, 0, win32con.KEYEVENTF_KEYUP, 0)
 
-def custom_write(text, delay=0.01):
+def type_text(text):
     for char in text:
         keyboard.press(char)
-        time.sleep(0.0001)
+        time.sleep(0.01)
         keyboard.release(char)
-        time.sleep(delay)  # Задержка между символами
-
-def type_text(text): # Функция для набора текста с учетом специальных символов
-    custom_write(f"{text}", delay=0.01)
-
-def translate_text(text):  # Функция для перевода текста
+        time.sleep(0.01)
+        
+def translate_text(text):
     global translation_language
     
     translator = GoogleTranslator(source='ru', target=translation_language)
@@ -160,14 +157,14 @@ def on_hotkey():
         switch_keyboard_layout('00000419')
     
     
-    if history.value == '': # Сохранение истории
+    if history.value == '':
         history.value += str(textbar.value)
         history.update()
     else:
         history.value += str(f'\n{textbar.value}')
         history.update()
     
-    text.value = "" # Очистка текстового поля
+    text.value = ""
     text.update()
     textbar.value = ""
     textbar.update()
@@ -178,20 +175,19 @@ def switch_keyboard_layout(layout_hex):
     layout_id = int(layout_hex, 16)
     win32api.PostMessage(hwnd, win32con.WM_INPUTLANGCHANGEREQUEST, 0, layout_id)
 
-def main(page: ft.Page):  # Приложение
+def main(page: ft.Page):
     global textbar, history, text, mode_ap, slider_count
-    # Устанавливаем параметры окна
     page.title = "Переводчик Винкс"
     page.window.width = 840
     page.window.height = 400
-    page.window.center()  # Центрируем окно на экране
+    page.window.center()
     
     async def on_click_up(e):
-        textbar.value = textbar.value.upper() # Применяем upper() ко всему тексту в textbar
-        textbar.update()  # Обновляем textbar на странице
+        textbar.value = textbar.value.upper()
+        textbar.update()
         
-        text.value = text.value.upper() # Переводим текст в textbar и обновляем text
-        text.update()  # Обновляем text на странице
+        text.value = text.value.upper()
+        text.update()
         
         # Анимация уменьшения размера, изменения цвета и вращения
         upper_button.width = 30
